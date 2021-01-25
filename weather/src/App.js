@@ -60,8 +60,8 @@ function App() {
         <p>Feels like: {Math.round(currentWeather.main.feels_like)}<span>&#8451;</span></p>
         <p>Humidity: {currentWeather.main.humidity}%</p>
         <p>Pressure: {currentWeather.main.pressure}hPa</p>
-        <p>Temp min: {currentWeather.main.temp_min}</p>
-        <p>Temp max: {currentWeather.main.temp_max}</p>
+        <p>Temp min: {Math.round(currentWeather.main.temp_min)}<span>&#8451;</span></p>
+        <p>Temp max: {Math.round(currentWeather.main.temp_max)}<span>&#8451;</span></p>
         </Paper>
       </Grid>
       </Grid>
@@ -72,8 +72,8 @@ function App() {
           <p>{moment.unix(dai.dt).format("dddd, Do")}</p>
           <div>
             <img src={`${api.icon}${dai.weather[0].icon}@2x.png`} alt=""></img>
-            <p>Max:{Math.round(dai.temp.max)}</p>
-            <p>Min:{Math.round(dai.temp.min)}</p>
+            <p>Max:{Math.round(dai.temp.max)}<span>&#8451;</span></p>
+            <p>Min:{Math.round(dai.temp.min)}<span>&#8451;</span></p>
             <p>{(dai.pop)*100}%</p>
           </div>
         </Paper>
