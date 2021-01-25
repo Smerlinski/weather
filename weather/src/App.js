@@ -1,7 +1,7 @@
 import { Button, Grid, Paper, TextField } from '@material-ui/core';
 import 'fontsource-roboto';
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import moment from 'moment';
 
 const api = {
@@ -14,8 +14,6 @@ function App() {
   
   const [daily, setDaily] = useState([]);
   const [currentWeather, setCurrentWeather] = useState({});
-  const [long, setLong] = useState('');
-  const [lang, setLang] = useState('');
   const wpis = useFormInput('');
   let timezone = 0;
   let dateTime = 0;
@@ -27,9 +25,7 @@ function App() {
     fetch(`${api.url_current}weather?q=${wpis.value}&units=metric&APPID=${api.key}`)
     .then((res) => res.json())
     .then((result) => {
-      timezone = result.timezone;
       dateTime = result.dt;
-      day = moment.unix(dateTime);
       setCurrentWeather(result);
       lo = result.coord.lon;
       la = result.coord.lat;
@@ -63,7 +59,7 @@ function App() {
         <Paper>
         <h1>Miasto: {currentWeather.name}</h1>
         <p>Date: {moment().format("dddd, h:mm a")}</p>
-        <img src={`${api.icon}${currentWeather.weather[0].icon}@2x.png`}></img>
+        <img src={`${api.icon}${currentWeather.weather[0].icon}@2x.png`} alt=""></img>
         <p>Current temp: {Math.round(currentWeather.main.temp)}<span>&#8451;</span></p>
         <p>Feels like: {Math.round(currentWeather.main.feels_like)}<span>&#8451;</span></p>
         <p>Humidity: {currentWeather.main.humidity}%</p>
@@ -79,7 +75,7 @@ function App() {
         <Paper>
           <p>{moment.unix(dai.dt).format("dddd, Do")}</p>
           <div>
-            <img src={`${api.icon}${dai.weather[0].icon}@2x.png`}></img>
+            <img src={`${api.icon}${dai.weather[0].icon}@2x.png`} alt=""></img>
             <p>Max:{Math.round(dai.temp.max)}</p>
             <p>Min:{Math.round(dai.temp.min)}</p>
             <p>{(dai.pop)*100}%</p>
