@@ -15,17 +15,13 @@ function App() {
   const [daily, setDaily] = useState([]);
   const [currentWeather, setCurrentWeather] = useState({});
   const wpis = useFormInput('');
-  let timezone = 0;
-  let dateTime = 0;
   let lo;
   let la;
-  let day;
 
   const tekst = () => {
     fetch(`${api.url_current}weather?q=${wpis.value}&units=metric&APPID=${api.key}`)
     .then((res) => res.json())
     .then((result) => {
-      dateTime = result.dt;
       setCurrentWeather(result);
       lo = result.coord.lon;
       la = result.coord.lat;
