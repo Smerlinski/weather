@@ -1,4 +1,4 @@
-import { Button, Grid, Paper, TextField } from '@material-ui/core';
+import { Button, Grid, Paper, TextField, Tooltip } from '@material-ui/core';
 import 'fontsource-roboto';
 import './App.css';
 import React, { useState } from 'react';
@@ -11,81 +11,98 @@ const api = {
 };
 
 function App() {
-  
+
   const [daily, setDaily] = useState([]);
   const [currentWeather, setCurrentWeather] = useState({});
   const wpis = useFormInput('');
-  let lo;
-  let la;
+  let lon;
+  let lat;
 
   const tekst = () => {
-    fetch(`${api.url_current}weather?q=${wpis.value}&units=metric&APPID=${api.key}`)
-    .then((res) => res.json())
-    .then((result) => {
-      setCurrentWeather(result);
-      lo = result.coord.lon;
-      la = result.coord.lat;
-      sec();
-    });
+    wpis === "undefined" ? (
+      console.log('Nie wybrano miasta')
+    ) :
+      (
+        fetch(`${api.url_current}weather?q=${wpis.value}&units=metric&APPID=${api.key}`)
+          .then((res) => res.json())
+          .then((result) => {
+            setCurrentWeather(result);
+            lon = result.coord.lon;
+            lat = result.coord.lat;
+            sec();
+          }))
   }
 
   const sec = () => {
-    fetch(`${api.url_current}onecall?lat=${la}&lon=${lo}&exclude=minutely&units=metric&appid=${api.key}`)
-    .then((res) => res.json())
-    .then((result) => {
-      console.log(result);
-      setDaily(result.daily);
-      console.log(daily);
-      daily.pop();
-      daily.pop();
-      console.log(daily.dt)
-    })
+    fetch(`${api.url_current}onecall?lat=${lat}&lon=${lon}&exclude=minutely&units=metric&appid=${api.key}`)
+      .then((res) => res.json())
+      .then((result) => {
+        setDaily(result.daily);
+        daily.pop();
+        daily.pop();
+      })
   }
 
   return (<>
-  <div className="search-bar">
-  <TextField variant="outlined" {...wpis} label="City" fullWidth></TextField>
-  <Button variant="contained" color="primary" size="large" onClick={tekst}>Search</Button>
-  </div>
-  {typeof currentWeather.main != "undefined" ? (
-    <>
-    <div className="flex">
-    <Grid container spacing={3} direction="row" justify="center" alignItems="center">
-      <Grid item xs={10}>
-        <Paper>
-        <h1>Miasto: {currentWeather.name}</h1>
-        <p>Date: {moment().format("dddd, h:mm a")}</p>
-        <img src={`${api.icon}${currentWeather.weather[0].icon}@2x.png`} alt=""></img>
-        <p>Current temp: {Math.round(currentWeather.main.temp)}<span>&#8451;</span></p>
-        <p>Feels like: {Math.round(currentWeather.main.feels_like)}<span>&#8451;</span></p>
-        <p>Humidity: {currentWeather.main.humidity}%</p>
-        <p>Pressure: {currentWeather.main.pressure}hPa</p>
-        <p>Temp min: {Math.round(currentWeather.main.temp_min)}<span>&#8451;</span></p>
-        <p>Temp max: {Math.round(currentWeather.main.temp_max)}<span>&#8451;</span></p>
-        </Paper>
+    <div className="search-bar">
+      <Grid container spacing={0} justify="center">
+        <Grid item xs={8} md={8} className="text-field">
+          <TextField variant="outlined" {...wpis} label="City" fullWidth className="text-field"></TextField>
+
+        </Grid>
+        <Grid item xs={2} md={2}>
+          <Button style={{ minHeight: "56px" }} variant="contained" color="primary" size="large" onClick={tekst} fullWidth>Search</Button>
+        </Grid>
       </Grid>
-      </Grid>
-      <Grid container spacing={3} direction="row" justify="center" alignItems="center">
-      {daily.slice(1,6).map((dai) =>(
-        <Grid item xs={12} sm={2} key={dai.id}>
-        <Paper>
-          <p>{moment.unix(dai.dt).format("dddd, Do")}</p>
-          <div>
-            <img src={`${api.icon}${dai.weather[0].icon}@2x.png`} alt=""></img>
-            <p>Max:{Math.round(dai.temp.max)}<span>&#8451;</span></p>
-            <p>Min:{Math.round(dai.temp.min)}<span>&#8451;</span></p>
-            <p>{(dai.pop)*100}%</p>
-          </div>
-        </Paper>
-      </Grid>
-      ))}
-    </Grid>
-    <Grid>
-      
-    </Grid>
     </div>
-   </>
-  ):("")}
+    {typeof currentWeather.main != "undefined" ? (
+      <>
+        <div className="flex">
+          <Grid container spacing={3} direction="row" justify="center" alignItems="center">
+            <Grid item xs={10} md={10}>
+              <Paper elevation={3} className="item">
+                <Grid item className="current-day" md={6} xs={12}>
+                  <h3>{currentWeather.name}</h3>
+                  <p>{moment().format("dddd, h:mm a")}</p>
+                  <Tooltip title={currentWeather.weather[0].description}>
+                    <img src={`${api.icon}${currentWeather.weather[0].icon}@2x.png`} alt=""></img>
+                  </Tooltip>
+                  <p> {Math.round(currentWeather.main.temp)}<span>&#8451;</span></p>
+                </Grid>
+                <Grid item className="current-day" md={6} xs={12}>
+                  <p>Feels like: {Math.round(currentWeather.main.feels_like)}<span>&#8451;</span></p>
+                  <p>Humidity: {currentWeather.main.humidity}%</p>
+                  <p>Pressure: {currentWeather.main.pressure}hPa</p>
+                  <p>High {Math.round(currentWeather.main.temp_max)}<span>&#8451;</span></p>
+                  <p>Low {Math.round(currentWeather.main.temp_min)}<span>&#8451;</span></p>
+                </Grid>
+              </Paper>
+            </Grid>
+          </Grid>
+          <Grid container spacing={3} direction="row" justify="center" alignItems="center">
+            {daily.slice(1, 6).map((day) => (
+              <Grid item lg={2} md={10} xs={10} key={day.dt}>
+                <Paper elevation={3} className="item">
+                  <div className="daily">
+                    <p>{moment.unix(day.dt).format("ddd, D")}</p>
+                    <Tooltip title={day.weather[0].description}>
+                      <img src={`${api.icon}${day.weather[0].icon}@2x.png`} alt={day.weather.main}></img>
+                    </Tooltip>
+                    <Tooltip title="High/Low">
+                      <p>{Math.round(day.temp.max)}<span>&#8451;</span>/
+              {Math.round(day.temp.min)}<span>&#8451;</span></p>
+                    </Tooltip>
+                    <Tooltip title="Precipitation">
+                      <p><span>&#9730;</span>{(day.pop) * 100}%</p>
+                    </Tooltip>
+                  </div>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </div>
+      </>
+    ) : ("")}
   </>
   );
 }
@@ -94,11 +111,11 @@ const useFormInput = initialValue => {
   const [value, setValue] = useState(initialValue);
 
   const handleChange = e => {
-      setValue(e.target.value);
+    setValue(e.target.value);
   }
   return {
-      value,
-      onChange: handleChange
+    value,
+    onChange: handleChange
   }
 }
 

@@ -32,18 +32,33 @@
   flex-grow: 1;
 }
 
-.search-bar {
-  margin-top: 1rem;
-  margin-left: auto;
-  margin-right: auto;
-  width: 60%;
+.current-day{
+  width: 20%;
+  margin:auto;
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.item {
+  padding: 0.5rem 2rem;
+  display: flex;
+  font-size: larger;
+  flex-grow: 1;
+}
+
+.search-bar {
+  margin-top: 1rem;
+  flex-grow: 1;
+}
+
+.text-field {
+  height: 42;
+}
+
+.daily {
+  width: auto;
+  margin: 0 auto;
+  align-content: center;
+  justify-content: center;
+  text-align: center;
+  font-size: larger;
 }
